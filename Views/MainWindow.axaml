@@ -1,0 +1,84 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:MTGcollector_app.ViewModels"
+        x:Class="MTGcollector_app.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        mc:Ignorable="d"
+        Width="1200"
+        Height="800"
+        MinWidth="900"
+        MinHeight="600"
+        Title="MTGcollector">
+
+    <Grid ColumnDefinitions="220,*">
+
+        <!-- Sidebar -->
+        <Border Grid.Column="0"
+                Background="#202020"
+                Padding="20">
+
+            <StackPanel Spacing="10">
+
+                <TextBlock Text="MTGcollector"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Margin="0,0,0,25"/>
+
+                <Button Content="Collection"
+                        HorizontalContentAlignment="Left"
+                        Padding="15,10"/>
+
+                <Button Content="Decks"
+                        HorizontalContentAlignment="Left"
+                        Padding="15,10"/>
+
+                <Button Content="Import"
+                        HorizontalContentAlignment="Left"
+                        Padding="15,10"/>
+
+                <Button Content="Settings"
+                        HorizontalContentAlignment="Left"
+                        Padding="15,10"/>
+
+            </StackPanel>
+
+        </Border>
+
+        <!-- Main content -->
+        <Border Grid.Column="1"
+                Padding="30">
+
+            <StackPanel Spacing="20">
+
+                <TextBlock Text="Collection"
+                           FontSize="32"
+                           FontWeight="Bold"/>
+
+                <TextBlock Text="Your Magic: The Gathering collection"
+                           FontSize="16"
+                           Opacity="0.7"/>
+
+                <Border Padding="20"
+                        CornerRadius="8">
+
+                    <StackPanel Spacing="10">
+
+                        <TextBlock Text="Welcome to MTGcollector!"
+                                   FontSize="22"
+                                   FontWeight="SemiBold"/>
+
+                        <TextBlock Text="Your collection will appear here once we connect the database."/>
+
+                    </StackPanel>
+
+                </Border>
+
+            </StackPanel>
+
+        </Border>
+
+    </Grid>
+
+</Window>
