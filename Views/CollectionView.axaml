@@ -1,0 +1,101 @@
+<UserControl x:Class="MTGcollector_app.Views.CollectionView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:MTGcollector_app.ViewModels"
+             xmlns:models="clr-namespace:MTGcollector_app.Models"
+             x:DataType="vm:CollectionViewModel"
+             mc:Ignorable="d"
+             Background="White">
+
+  <Grid RowDefinitions="Auto,Auto,*" Margin="24">
+
+    <!-- Header -->
+    <TextBlock Grid.Row="0" Text="My Collection" FontSize="32" FontWeight="Bold" Margin="0,0,0,20" />
+    <TextBlock Grid.Row="0" Text="{Binding SearchResults.Count, StringFormat='Search Results: {0}'}" FontSize="12" VerticalAlignment="Bottom" Foreground="Gray" />
+
+    <!-- Search -->
+    <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,0,0,20">
+      <TextBox Grid.Column="0" PlaceholderText="Search for a card..." Text="{Binding SearchText, Mode=TwoWay}" />
+      <Button Grid.Column="1" Content="Search" Command="{Binding SearchScryfallCommand}" Margin="10,0,0,0" Padding="20,0" Background="#0066CC" Foreground="White" IsEnabled="True" Cursor="Hand" />
+    </Grid>
+
+    <!-- Main content -->
+    <Grid Grid.Row="2" RowDefinitions="Auto,*,Auto,*">
+
+      <!-- Scryfall results -->
+      <TextBlock Grid.Row="0" Text="Search Results" FontSize="18" FontWeight="Bold" Margin="0,0,0,10" />
+      <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" Margin="0,0,0,20">
+        <ItemsControl ItemsSource="{Binding SearchResults}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="models:ScryfallCard">
+              <Border Width="220" Margin="8" Padding="10" CornerRadius="8" BorderThickness="1" BorderBrush="#CCCCCC">
+                <StackPanel>
+                  <Image Height="280" Stretch="Uniform" Source="{Binding ImageUris.Normal}" />
+                  <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Margin="0,10,0,5" TextWrapping="Wrap" />
+                  <TextBlock Text="{Binding SetName}" FontSize="12" />
+                  <TextBlock Text="{Binding CollectorNumber}" FontSize="12" />
+                  <Button Content="Add to Collection" Margin="0,10,0,0" Tag="{Binding}" Click="OnAddToCollectionClicked" Background="#28A745" Foreground="White" IsEnabled="True" Cursor="Hand" />
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <!-- Collection -->
+      <TextBlock Grid.Row="2" Text="My Cards" FontSize="18" FontWeight="Bold" Margin="0,20,0,10" />
+      <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <ItemsControl ItemsSource="{Binding Cards}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="models:Card">
+              <Border Margin="0,4" Padding="10" CornerRadius="6" BorderThickness="1" BorderBrush="#CCCCCC">
+                <Grid ColumnDefinitions="80,*,100,100,100,Auto" VerticalAlignment="Center">
+                  <Image Grid.Column="0" Width="60" Height="84" Stretch="Uniform" Source="{Binding ImageUrl}" />
+
+                  <StackPanel Grid.Column="1">
+                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" />
+                    <TextBlock Text="{Binding SetName}" FontSize="12" />
+                    <TextBlock Text="{Binding SetCode}" FontSize="12" />
+                    <TextBlock Text="{Binding CollectorNumber}" FontSize="12" />
+                  </StackPanel>
+
+                  <StackPanel Grid.Column="2">
+                    <TextBlock Text="Copies" FontSize="12" />
+                    <TextBlock Text="{Binding Copies.Count}" FontWeight="Bold" />
+                  </StackPanel>
+
+                  <StackPanel Grid.Column="3">
+                    <TextBlock Text="Foil" FontSize="12" />
+                    <TextBlock Text="{Binding Copies.Count}" FontSize="12" />
+                  </StackPanel>
+
+                  <StackPanel Grid.Column="4">
+                    <TextBlock Text="Rarity" FontSize="12" />
+                    <TextBlock Text="{Binding Rarity}" FontSize="12" />
+                  </StackPanel>
+
+                  <StackPanel Grid.Column="5" Orientation="Horizontal">
+                    <Button Content="Edit" Tag="{Binding}" Click="OnEditClicked" Margin="0,0,4,0" Background="#FFC107" Foreground="White" IsEnabled="True" Cursor="Hand" />
+                    <Button Content="Remove" Tag="{Binding}" Click="OnRemoveClicked" Background="#DC3545" Foreground="White" IsEnabled="True" Cursor="Hand" />
+                  </StackPanel>
+
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+    </Grid>
+
+  </Grid>
+
+</UserControl>

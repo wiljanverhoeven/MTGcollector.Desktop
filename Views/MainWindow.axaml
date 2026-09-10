@@ -1,83 +1,55 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="using:MTGcollector_app.ViewModels"
-        x:Class="MTGcollector_app.Views.MainWindow"
-        x:DataType="vm:MainViewModel"
-        mc:Ignorable="d"
-        Width="1200"
-        Height="800"
-        MinWidth="900"
-        MinHeight="600"
-        Title="MTGcollector">
+﻿<Window
+    x:Class="MTGcollector_app.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:MTGcollector_app.ViewModels"
+    xmlns:views="clr-namespace:MTGcollector_app.Views"
+    x:DataType="vm:MainWindowViewModel"
+    Title="MTGcollector"
+    Width="1400"
+    Height="900">
 
-    <Grid ColumnDefinitions="220,*">
+    <Grid ColumnDefinitions="220,*" Background="White">
+
 
         <!-- Sidebar -->
-        <Border Grid.Column="0"
-                Background="#202020"
-                Padding="20">
+        <Border
+            Grid.Column="0"
+            Padding="20"
+            Background="#F5F5F5">
 
-            <StackPanel Spacing="10">
+            <StackPanel>
 
-                <TextBlock Text="MTGcollector"
-                           FontSize="24"
-                           FontWeight="Bold"
-                           Margin="0,0,0,25"/>
+                <TextBlock
+                    Text="MTGcollector"
+                    FontSize="24"
+                    FontWeight="Bold"
+                    Margin="0,0,0,30" />
 
-                <Button Content="Collection"
-                        HorizontalContentAlignment="Left"
-                        Padding="15,10"/>
+                <Button
+                    Content="Collection"
+                    Margin="0,5" />
 
-                <Button Content="Decks"
-                        HorizontalContentAlignment="Left"
-                        Padding="15,10"/>
+                <Button
+                    Content="Decks"
+                    Margin="0,5" />
 
-                <Button Content="Import"
-                        HorizontalContentAlignment="Left"
-                        Padding="15,10"/>
+                <Button
+                    Content="Import"
+                    Margin="0,5" />
 
-                <Button Content="Settings"
-                        HorizontalContentAlignment="Left"
-                        Padding="15,10"/>
-
-            </StackPanel>
-
-        </Border>
-
-        <!-- Main content -->
-        <Border Grid.Column="1"
-                Padding="30">
-
-            <StackPanel Spacing="20">
-
-                <TextBlock Text="Collection"
-                           FontSize="32"
-                           FontWeight="Bold"/>
-
-                <TextBlock Text="Your Magic: The Gathering collection"
-                           FontSize="16"
-                           Opacity="0.7"/>
-
-                <Border Padding="20"
-                        CornerRadius="8">
-
-                    <StackPanel Spacing="10">
-
-                        <TextBlock Text="Welcome to MTGcollector!"
-                                   FontSize="22"
-                                   FontWeight="SemiBold"/>
-
-                        <TextBlock Text="Your collection will appear here once we connect the database."/>
-
-                    </StackPanel>
-
-                </Border>
+                <Button
+                    Content="Settings"
+                    Margin="0,5" />
 
             </StackPanel>
 
         </Border>
+
+        <!-- Content -->
+        <views:CollectionView
+            Grid.Column="1"
+            DataContext="{Binding CurrentViewModel}" />
 
     </Grid>
 
