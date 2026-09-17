@@ -1,8 +1,5 @@
-﻿using Avalonia.Controls;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MTGcollector_app.Models;
-using SkiaSharp;
-using System.Reflection.Emit;
 
 namespace MTGcollector_app.Data;
 

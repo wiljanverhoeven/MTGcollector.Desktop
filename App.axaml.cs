@@ -30,6 +30,11 @@ public partial class App : Application
 
         Services = services.BuildServiceProvider();
 
+        using (var db = Services.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext())
+        {
+            db.Database.EnsureCreated();
+        }
+
         if (ApplicationLifetime
             is IClassicDesktopStyleApplicationLifetime desktop)
         {

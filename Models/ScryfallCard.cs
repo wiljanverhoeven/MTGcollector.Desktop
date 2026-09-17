@@ -1,13 +1,22 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace MTGcollector_app.Models;
 
 public class ScryfallImageUris
-
 {
     [JsonPropertyName("normal")]
     public string? Normal { get; set; }
+
+    [JsonPropertyName("small")]
+    public string? Small { get; set; }
+}
+
+public class ScryfallCardFace
+{
+    [JsonPropertyName("image_uris")]
+    public ScryfallImageUris? ImageUris { get; set; }
 }
 
 public class ScryfallCard
@@ -29,9 +38,18 @@ public class ScryfallCard
     [JsonPropertyName("image_uris")]
     public ScryfallImageUris? ImageUris { get; set; }
 
+    [JsonPropertyName("card_faces")]
+    public List<ScryfallCardFace>? CardFaces { get; set; }
+
+    public string? ImageUrl => GetImageUrl();
+
     public string GetImageUrl()
     {
-        return ImageUris?.Normal ?? string.Empty;
+        return ImageUris?.Normal
+            ?? ImageUris?.Small
+            ?? CardFaces?.FirstOrDefault()?.ImageUris?.Normal
+            ?? CardFaces?.FirstOrDefault()?.ImageUris?.Small
+            ?? string.Empty;
     }
 }
 

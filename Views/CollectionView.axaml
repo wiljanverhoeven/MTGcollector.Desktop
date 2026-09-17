@@ -5,6 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MTGcollector_app.ViewModels"
              xmlns:models="clr-namespace:MTGcollector_app.Models"
+             xmlns:img="clr-namespace:MTGcollector_app.Helpers"
+             x:Name="Root"
              x:DataType="vm:CollectionViewModel"
              mc:Ignorable="d"
              Background="White">
@@ -18,7 +20,15 @@
     <!-- Search -->
     <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,0,0,20">
       <TextBox Grid.Column="0" PlaceholderText="Search for a card..." Text="{Binding SearchText, Mode=TwoWay}" />
-      <Button Grid.Column="1" Content="Search" Command="{Binding SearchScryfallCommand}" Margin="10,0,0,0" Padding="20,0" Background="#0066CC" Foreground="White" IsEnabled="True" Cursor="Hand" />
+      <Button Grid.Column="1"
+              Content="Search"
+              Command="{Binding SearchScryfallCommand}"
+              IsEnabled="{Binding !Searching}"
+              Margin="10,0,0,0"
+              Padding="20,0"
+              Background="#0066CC"
+              Foreground="White"
+              Cursor="Hand" />
     </Grid>
 
     <!-- Main content -->
@@ -38,11 +48,17 @@
             <DataTemplate x:DataType="models:ScryfallCard">
               <Border Width="220" Margin="8" Padding="10" CornerRadius="8" BorderThickness="1" BorderBrush="#CCCCCC">
                 <StackPanel>
-                  <Image Height="280" Stretch="Uniform" Source="{Binding ImageUris.Normal}" />
+                  <Image Height="280" Stretch="Uniform" img:WebImage.Url="{Binding ImageUrl}" />
                   <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Margin="0,10,0,5" TextWrapping="Wrap" />
                   <TextBlock Text="{Binding SetName}" FontSize="12" />
                   <TextBlock Text="{Binding CollectorNumber}" FontSize="12" />
-                  <Button Content="Add to Collection" Margin="0,10,0,0" Tag="{Binding}" Click="OnAddToCollectionClicked" Background="#28A745" Foreground="White" IsEnabled="True" Cursor="Hand" />
+                  <Button Content="Add to Collection"
+                          Margin="0,10,0,0"
+                          Command="{Binding #Root.((vm:CollectionViewModel)DataContext).AddScryfallCardCommand}"
+                          CommandParameter="{Binding}"
+                          Background="#28A745"
+                          Foreground="White"
+                          Cursor="Hand" />
                 </StackPanel>
               </Border>
             </DataTemplate>
@@ -58,7 +74,7 @@
             <DataTemplate x:DataType="models:Card">
               <Border Margin="0,4" Padding="10" CornerRadius="6" BorderThickness="1" BorderBrush="#CCCCCC">
                 <Grid ColumnDefinitions="80,*,100,100,100,Auto" VerticalAlignment="Center">
-                  <Image Grid.Column="0" Width="60" Height="84" Stretch="Uniform" Source="{Binding ImageUrl}" />
+                  <Image Grid.Column="0" Width="60" Height="84" Stretch="Uniform" img:WebImage.Url="{Binding ImageUrl}" />
 
                   <StackPanel Grid.Column="1">
                     <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" />
@@ -83,8 +99,19 @@
                   </StackPanel>
 
                   <StackPanel Grid.Column="5" Orientation="Horizontal">
-                    <Button Content="Edit" Tag="{Binding}" Click="OnEditClicked" Margin="0,0,4,0" Background="#FFC107" Foreground="White" IsEnabled="True" Cursor="Hand" />
-                    <Button Content="Remove" Tag="{Binding}" Click="OnRemoveClicked" Background="#DC3545" Foreground="White" IsEnabled="True" Cursor="Hand" />
+                    <Button Content="Edit"
+                            Command="{Binding #Root.((vm:CollectionViewModel)DataContext).StartEditCommand}"
+                            CommandParameter="{Binding}"
+                            Margin="0,0,4,0"
+                            Background="#FFC107"
+                            Foreground="White"
+                            Cursor="Hand" />
+                    <Button Content="Remove"
+                            Command="{Binding #Root.((vm:CollectionViewModel)DataContext).DeleteCardCommand}"
+                            CommandParameter="{Binding}"
+                            Background="#DC3545"
+                            Foreground="White"
+                            Cursor="Hand" />
                   </StackPanel>
 
                 </Grid>
