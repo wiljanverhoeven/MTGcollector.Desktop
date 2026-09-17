@@ -6,7 +6,7 @@ public class CollectionCard
 
     public int CardId { get; set; }
 
-    public Card Card { get; set; } = null!;
+    public Card? Card { get; set; }
 
     public string? Category { get; set; }
 

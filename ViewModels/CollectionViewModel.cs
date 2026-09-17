@@ -4,7 +4,6 @@ using MTGcollector_app.Models;
 using MTGcollector_app.Services;
 using System;
 using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MTGcollector_app.ViewModels;
@@ -39,7 +38,10 @@ public partial class CollectionViewModel : ViewModelBase
     public partial string EditCardName { get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial int EditNumberOfCopies { get; set; }
+    public partial decimal EditNumberOfCopies { get; set; }
+
+    [ObservableProperty]
+    public partial bool HasNoCards { get; set; } = true;
 
     public ObservableCollection<Card> Cards { get; } = new ObservableCollection<Card>();
 
@@ -70,45 +72,7 @@ public partial class CollectionViewModel : ViewModelBase
         foreach (var card in cards)
             Cards.Add(card);
 
-        if (Cards.Count == 0)
-        {
-            var testCard = new Card
-            {
-                Name = "Lightning Bolt",
-                SetCode = "LEA",
-                SetName = "Limited Edition Alpha",
-                CollectorNumber = "1",
-                Rarity = "Common",
-                ManaCost = "{R}",
-                TypeLine = "Instant",
-                OracleText = "Lightning Bolt deals 3 damage to any target.",
-                ImageUrl = "https://cards.scryfall.io/normal/front/0/8/08a1e3e3-3f9e-43ef-b9b0-4b3ad0b18cd8.jpg?1662564876",
-                Copies = new System.Collections.ObjectModel.ObservableCollection<CollectionCard>
-                {
-                    new CollectionCard { IsFoil = false },
-                    new CollectionCard { IsFoil = true }
-                }
-            };
-            Cards.Add(testCard);
-
-            var testCard2 = new Card
-            {
-                Name = "Black Lotus",
-                SetCode = "LEA",
-                SetName = "Limited Edition Alpha",
-                CollectorNumber = "232",
-                Rarity = "Rare",
-                ManaCost = "{0}",
-                TypeLine = "Artifact",
-                OracleText = "Tap, Sacrifice Black Lotus: Add three mana of any one color to your mana pool.",
-                ImageUrl = "https://cards.scryfall.io/normal/front/b/d/bd8049b8-dcb9-4abc-880d-8c756e9e0f6a.jpg?1662563618",
-                Copies = new System.Collections.ObjectModel.ObservableCollection<CollectionCard>
-                {
-                    new CollectionCard { IsFoil = false }
-                }
-            };
-            Cards.Add(testCard2);
-        }
+        HasNoCards = Cards.Count == 0;
     }
 
     [RelayCommand]
@@ -143,40 +107,51 @@ public partial class CollectionViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task AddScryfallCardAsync(
-        ScryfallCard card)
+    private async Task AddScryfallCardAsync(ScryfallCard? card)
     {
+        if (card == null)
+            return;
+
         try
         {
-            await collectionService
-                .AddScryfallCardAsync(card);
+            SearchError = string.Empty;
+
+            await collectionService.AddScryfallCardAsync(card);
 
             ImportMessage =
                 $"Added {card.Name} " +
-                $"({card.Set?.ToUpperInvariant()} " +
-                $"{card.CollectorNumber}) " +
+                $"({card.Set?.ToUpperInvariant()} {card.CollectorNumber}) " +
                 "to your collection.";
 
             await LoadCardsAsync();
         }
         catch (Exception ex)
         {
-            SearchError =
-                $"Could not add card: {ex.Message}";
+            SearchError = $"Could not add card: {ex.Message}";
         }
     }
 
     [RelayCommand]
-    private async Task DeleteCardAsync(
-        Card? card)
+    private async Task DeleteCardAsync(Card? card)
     {
         if (card == null)
             return;
 
-        await collectionService
-            .DeleteCardAsync(card.Id);
+        try
+        {
+            SearchError = string.Empty;
+            await collectionService.DeleteCardAsync(card.Id);
 
-        await LoadCardsAsync();
+            if (SelectedCard?.Id == card.Id)
+                CancelEdit();
+
+            ImportMessage = $"Removed {card.Name}.";
+            await LoadCardsAsync();
+        }
+        catch (Exception ex)
+        {
+            SearchError = $"Could not remove card: {ex.Message}";
+        }
     }
 
     [RelayCommand]
@@ -186,11 +161,17 @@ public partial class CollectionViewModel : ViewModelBase
             return;
 
         SelectedCard = card;
-
         EditCardName = card.Name;
+        EditNumberOfCopies = card.Copies.Count;
+        SearchError = string.Empty;
+    }
 
-        EditNumberOfCopies =
-            card.Copies.Count;
+    [RelayCommand]
+    private void CancelEdit()
+    {
+        SelectedCard = null;
+        EditCardName = string.Empty;
+        EditNumberOfCopies = 0;
     }
 
     [RelayCommand]
@@ -200,19 +181,28 @@ public partial class CollectionViewModel : ViewModelBase
             return;
 
         if (string.IsNullOrWhiteSpace(EditCardName))
+        {
+            SearchError = "Card name cannot be empty.";
             return;
+        }
 
         if (EditNumberOfCopies < 0)
             EditNumberOfCopies = 0;
 
-        await collectionService
-            .UpdateCardAsync(
+        try
+        {
+            await collectionService.UpdateCardAsync(
                 SelectedCard.Id,
                 EditCardName,
-                EditNumberOfCopies);
+                (int)EditNumberOfCopies);
 
-        SelectedCard = null;
-
-        await LoadCardsAsync();
+            ImportMessage = $"Updated {EditCardName.Trim()}.";
+            CancelEdit();
+            await LoadCardsAsync();
+        }
+        catch (Exception ex)
+        {
+            SearchError = $"Could not save card: {ex.Message}";
+        }
     }
 }

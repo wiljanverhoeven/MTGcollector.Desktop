@@ -146,7 +146,7 @@ public class CollectionService
         return new Card
         {
             Name = scryfallCard.Name,
-            ScryfallId = scryfallCard.Id,
+            ScryfallId = string.IsNullOrWhiteSpace(scryfallCard.Id) ? null : scryfallCard.Id,
             SetCode = scryfallCard.Set,
             SetName = scryfallCard.SetName,
             CollectorNumber = scryfallCard.CollectorNumber,
